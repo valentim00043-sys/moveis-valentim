@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Móveis Valentim - Marcenaria Fina</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="adminTopBar" style="display: none; background: #3E2723; color: white; text-align: center; padding: 10px; font-weight: bold; z-index: 9999; position: relative; width: 100%; font-size: 0.9rem;">
+        <i class="fas fa-hammer"></i> Modo Administrador Ativo 
+        <a href="admin.html" style="margin-left: 15px; color: #D7CCC8; text-decoration: underline;"><i class="fas fa-cog"></i> Ir para o Painel</a>
+        <button onclick="simulateClient()" style="margin-left: 15px; padding: 4px 12px; cursor: pointer; border: none; background: white; color: #3E2723; border-radius: 4px; font-weight: bold; transition: 0.2s;"><i class="fas fa-eye"></i> Ver Site 100% como Cliente</button>
+    </div>
+
+    <div id="loginOverlay" class="login-overlay" style="display: none;">
+        <div class="login-card">
+            <!-- Passo 1: Escolha Inicial -->
+            <div id="loginStepInitial">
+                <img src="./logo.jpg" alt="Logo" style="width: 120px; border-radius: 8px; margin-bottom: 20px;">
+                <h2>Bem-vindo à Móveis Valentim</h2>
+                <p>Escolha como deseja acessar a nossa marcenaria fina.</p>
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 25px;">
+                    <button class="btn btn-primary" onclick="showLoginStep(1)" style="width: 100%;"><i class="fas fa-user-check"></i> Identificar-me</button>
+                    <button class="btn-guest" onclick="enterAsGuest()" style="border: 1px solid #ddd; background: white; color: #666;"><i class="fas fa-user"></i> Continuar como Visitante</button>
+                </div>
+            </div>
+
+            <!-- Passo 2: Identificação -->
+            <div id="loginStep1" style="display: none;">
+                <button class="back-btn" onclick="showLoginStep('Initial')"><i class="fas fa-arrow-left"></i> Voltar</button>
+                <h2>Quase lá...</h2>
+                <p>Informe seus dados para um atendimento personalizado.</p>
+                <form id="loginForm">
+                    <div class="login-form-group">
+                        <label>Seu Nome</label>
+                        <input type="text" id="loginName" required placeholder="Ex: João da Silva">
+                    </div>
+                    <div class="login-form-group">
+                        <label>E-mail (Opcional)</label>
+                        <input type="email" id="loginEmail" placeholder="seuemail@exemplo.com">
+                    </div>
+                    <div class="login-form-group">
+                        <label>Sua Cidade (Opcional)</label>
+                        <input type="text" id="loginLocation" placeholder="Ex: São Paulo, SP">
+                    </div>
+                    <div class="login-form-group">
+                        <label>Foto de Perfil (Opcional)</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="loginPhoto" class="custom-file-upload" title="Escolher Foto">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <span id="loginPhotoName" style="font-size: 0.85rem; color: #666;">Nenhuma foto selecionada</span>
+                        </div>
+                        <input type="file" id="loginPhoto" accept="image/*" style="display: none;" onchange="document.getElementById('loginPhotoName').textContent = this.files[0] ? this.files[0].name : 'Nenhuma foto selecionada'">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">Entrar na Marcenaria</button>
+                </form>
+            </div>
+
+            <div style="margin-top: 25px; text-align: center; border-top: 1px solid #eee; padding-top: 15px;">
+                <button onclick="enterAsAdmin()" style="background: transparent; border: none; color: #3E2723; font-size: 0.85rem; cursor: pointer; opacity: 0.7;"><i class="fas fa-lock"></i> Acesso Administrativo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div id="promoBanner" class="promo-banner"></div>
+        <div class="container header-content">
+            <a href="#" class="logo" style="display: flex; align-items: center;"><img src="./logo.jpg" alt="Móveis Valentim Logo" style="height: 50px; border-radius: 4px;"></a>
+            <nav class="nav">
+                <a href="#inicio">Início</a>
+                <a href="#destaques" id="navDestaques" style="display:none;">Mais Vendidos</a>
+                <a href="#catalogo">Catálogo</a>
+                <a href="#depoimentos">Avaliações</a>
+                <a href="#galeria-clientes" id="navGaleria" style="display:none;">Fotos Reais</a>
+            </nav>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button id="headerProfileBtn" class="header-icon-btn" onclick="openAccountModal()" title="Meu Perfil" style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-user-circle" id="headerProfileIcon"></i>
+                    <img id="headerProfileImg" style="display:none; width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
+                </button>
+                <button class="header-icon-btn" onclick="shareSite()" title="Compartilhar Site"><i class="fas fa-share-nodes"></i></button>
+                <button class="mobile-menu-btn header-icon-btn"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-content" style="padding: 0 5%;">
+            <img src="./logo.jpg" alt="Móveis Valentim Logo" style="max-width: 180px; margin-bottom: 2rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+            <h1>Arte em Madeira para a Sua Casa</h1>
+            <p>Móveis planejados e artesanais esculpidos com paixão. Transforme os espaços do seu lar em experiências únicas de conforto e sofisticação.</p>
+            <a href="#catalogo" class="btn btn-primary">Explorar Coleção</a>
+        </div>
+    </section>
+
+    <!-- Destaques / Best Sellers -->
+    <section id="destaques" class="catalog container" style="display:none;">
+        <div class="section-title">
+            <h2>Destaques & Mais Vendidos</h2>
+            <p>As peças mais amadas pelos nossos clientes</p>
+        </div>
+        <div class="product-grid" id="bestSellersGrid"></div>
+    </section>
+
+    <!-- Catálogo Section -->
+    <section id="catalogo" class="catalog container">
+        <div class="section-title">
+            <h2>Nosso Catálogo</h2>
+            <p>Peças únicas, criadas para durar gerações</p>
+        </div>
+        <div class="filters-container" id="catalogFilters"></div>
+        <div class="product-grid" id="productGrid"></div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section id="depoimentos" style="background: var(--color-sand); padding: 4rem 0;">
+        <div class="container">
+            <div class="section-title">
+                <h2>O que dizem nossos clientes</h2>
+                <p>A satisfação de quem escolheu a Móveis Valentim</p>
+            </div>
+            <div class="reviews-grid" id="reviewsGrid"></div>
+        </div>
+    </section>
+
+    <!-- Customer Photos Section -->
+    <section id="galeria-clientes" class="container" style="padding: 100px 0; display:none;">
+        <div class="section-title center">
+            <h2>Na Casa do Cliente</h2>
+            <p>Inspire-se nos lares transformados pela Móveis Valentim</p>
+        </div>
+        <div class="customer-gallery-grid" id="customerGalleryGrid"></div>
+    </section>
+
+    <!-- Modal de Produto -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image-container" id="modalMediaContainer">
+                    <img src="" alt="Produto" id="modalImage" class="modal-img">
+                </div>
+                <div class="modal-info">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                        <h3 id="modalTitle" class="modal-title" style="margin-bottom: 10px;">Nome do Produto</h3>
+                        <button onclick="shareProduct()" style="background: var(--color-sand); border: none; width: 36px; height: 36px; min-width: 36px; border-radius: 50%; cursor: pointer; color: var(--color-wood-dark); display: flex; justify-content: center; align-items: center;" title="Compartilhar Móvel"><i class="fas fa-share-nodes"></i></button>
+                    </div>
+                    <div class="modal-price" id="modalPrice">R$ 0,00</div>
+                    <div id="modalPixDiscount" style="color: #27ae60; font-weight: bold; font-size: 0.95rem; margin-top: -15px; margin-bottom: 15px; display: none;"></div>
+                    <div class="modal-tags" id="modalTags"></div>
+                    <p id="modalDesc" style="margin-bottom: 20px; line-height: 1.6; color: #555;">Descrição.</p>
+                    
+                    <div class="custom-size-config" style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border: 1px dashed #ccc;">
+                        <h4 style="margin-top: 0; margin-bottom: 10px; color: #3E2723; font-size: 0.95rem;">Deseja este móvel sob medida? (Opcional)</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.80rem; color: #666; display:block; margin-bottom:4px;">Largura (ex: 1.50m)</label>
+                                <input type="text" id="modalWidth" placeholder="Largura" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing:border-box;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 0.80rem; color: #666; display:block; margin-bottom:4px;">Altura/Prof. (ex: 2.00m)</label>
+                                <input type="text" id="modalDepth" placeholder="Altura" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing:border-box;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payment-selection" style="margin-bottom: 25px; padding: 15px; background: #fff; border-radius: 8px; border: 1px solid #eee;">
+                        <h4 style="margin-top: 0; margin-bottom: 10px; color: #3E2723; font-size: 0.95rem;">Forma de Pagamento Desejada</h4>
+                        <select id="modalPayment" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 0.95rem; color: #444; outline: none;">
+                            <option value="">Ainda não decidi / Negociar</option>
+                            <option value="PIX (Com Desconto)">PIX (Desconto de 5%)</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito (Até 12x)</option>
+                            <option value="PayPal">PayPal</option>
+                            <option value="PicPay">PicPay</option>
+                            <option value="Boleto Bancário">Boleto Bancário</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; margin-top: 5px;">
+                        <button class="btn" id="modalBtnOrderSite" style="padding: 12px; font-size: 1rem; border: none; cursor: pointer; flex: 1; font-family: inherit; background: #3E2723; color: white; transition: 0.2s;"><i class="fas fa-shopping-cart"></i> Pedir pelo Site</button>
+                        <button class="btn" id="modalBtnOrder" style="padding: 12px; font-size: 1rem; border: none; cursor: pointer; flex: 1; font-family: inherit; background: #25D366; color: white; transition: 0.2s;"><i class="fab fa-whatsapp"></i> Pedir via WhatsApp</button>
+                    </div>
+                    
+                    <div class="suggestions-section">
+                        <h4>Você também pode gostar</h4>
+                        <div class="suggestions-grid" id="modalSuggestionsGrid">
+                            <!-- JS Injected -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- My Account Modal -->
+    <div id="accountModal" class="modal">
+        <div class="modal-content" style="max-width: 500px; padding: 40px; text-align: center; border-radius: 20px;">
+            <span class="close-modal" onclick="closeAccountModal()">&times;</span>
+            <div id="accountModalProfilePic" style="margin-bottom: 25px; position: relative; display: inline-block;">
+                <img id="accModalImg" src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: none; margin: 0 auto; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <i id="accModalIcon" class="fas fa-user-circle" style="font-size: 120px; color: var(--color-wood-pale);"></i>
+            </div>
+            
+            <h2 id="accModalName" style="margin-bottom: 5px; font-family: var(--font-heading); font-size: 2rem;">Nome do Usuário</h2>
+            <p id="accModalEmail" style="color: var(--color-text-light); margin-bottom: 30px; font-size: 1.1rem;">email@exemplo.com</p>
+            
+            <div class="account-info-card">
+                <div style="margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px;">
+                    <label style="font-weight: 700; font-size: 0.75rem; color: var(--color-wood-medium); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;">Localização</label>
+                    <div id="accModalLocation" style="font-size: 1.1rem; color: var(--color-wood-dark); font-weight: 500;">Não informada</div>
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.75rem; color: var(--color-wood-medium); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;">Sua Segurança</label>
+                    <div style="font-size: 1.1rem; color: #2ecc71; font-weight: 600;"><i class="fas fa-shield-alt"></i> Conta Verificada</div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                <button class="btn btn-primary" onclick="closeAccountModal()" style="width: 100%; border-radius: 10px; padding: 15px;">Voltar para a Loja</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Localização e Pagamentos -->
+    <section id="localizacao" class="container" style="padding: 60px 0; display:none;">
+        <div class="section-title center">
+            <h2>Nossa Localização</h2>
+            <p>Venha nos fazer uma visita</p>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+            <div id="companyAddressDisplay" style="font-size: 1.2rem; color: #5D4037; font-weight: bold; text-align: center;">
+                Buscando endereço...
+            </div>
+            <!-- Mockup Map Integrado -->
+            <iframe id="mapIframe" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14622.755353846664!2d-46.65!3d-23.55!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzAwLjAiUyA0NsKwMzknMDAuMCJX!5e0!3m2!1spt-BR!2sbr!4v1710000000000!5m2!1spt-BR!2sbr" width="100%" height="300" style="border:0; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </section>
+
+    <!-- Formas de Pagamento Bar -->
+    <div class="payments-bar">
+        <div class="container" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 30px;">
+            <div class="payment-brand"><i class="fa-brands fa-pix"></i> PIX</div>
+            <div class="payment-brand"><i class="fa-brands fa-cc-visa"></i> Visa</div>
+            <div class="payment-brand"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</div>
+            <div class="payment-brand"><i class="fa-brands fa-cc-amex"></i> Amex</div>
+            <div class="payment-brand"><i class="fa-brands fa-paypal"></i> PayPal</div>
+            <div class="payment-brand"><i class="fa-solid fa-qrcode"></i> PicPay</div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header" id="chatHeader">
+            <span style="font-weight: 600;"><i class="fab fa-whatsapp"></i> Atendimento Valentim</span>
+            <i class="fas fa-chevron-up" id="chatToggleIcon"></i>
+        </div>
+        <div class="chat-body" id="chatBody"></div>
+                <div class="chat-footer" style="padding: 10px 15px; align-items: center; gap: 8px;">
+                    <label class="chat-attachment-btn" for="chatAttach" style="color: #666; font-size: 1.3rem;"><i class="fas fa-paperclip"></i></label>
+                    <input type="file" id="chatAttach" accept="image/*,video/*,audio/*" style="display:none">
+                    <input type="text" id="chatInput" placeholder="Mensagem..." autocomplete="off" style="margin: 0; padding: 10px 15px; border-radius: 20px; border: 1px solid #efefef; background: #f0f2f5;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button class="chat-attachment-btn" style="color: var(--color-wood-medium); font-size: 1.3rem; padding: 0;" onclick="sendChatMessage()" title="Enviar Mensagem"><i class="fas fa-paper-plane"></i></button>
+                        <button id="recordAudioClientBtn" class="chat-attachment-btn" title="Gravar Áudio"><i class="fas fa-microphone"></i></button>
+                    </div>
+                </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <img src="./logo.jpg" alt="Móveis Valentim Logo" style="max-height: 80px; border-radius: 4px; margin-bottom: 10px;">
+                <p>Nossa paixão é construir móveis que redefinem o significado do seu lar.</p>
+            </div>
+            <div class="footer-links">
+                <a href="admin.html" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.9rem; margin-top: 10px; display:inline-block;"><i class="fas fa-lock"></i> Acesso Administrativo</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Context Menu -->
+    <div id="customContextMenu" class="context-menu" style="display: none;">
+        <div class="context-menu-item" id="ctxCopy"><i class="fas fa-copy"></i> Copiar Mensagem</div>
+        <div class="context-menu-item" id="ctxForward"><i class="fas fa-share"></i> Encaminhar para WhatsApp</div>
+        <div class="context-menu-item ctx-danger" id="ctxDelete"><i class="fas fa-trash"></i> Excluir Mensagem</div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
